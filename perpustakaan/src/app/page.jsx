@@ -1,6 +1,8 @@
 import Link from "next/link";
 import Hero from "@/components/Hero";
 import pool from "@/lib/db";
+import { formatDate } from "@/lib/format";
+import { ANNOUNCEMENT_CATEGORIES } from "@/lib/announcements";
 
 export const dynamic = "force-dynamic";
 
@@ -28,7 +30,7 @@ export default async function HomePage() {
     `SELECT id, judul, isi, kategori, tanggal_publikasi
      FROM pengumuman
      WHERE status = 'Published'
-     ORDER BY tanggal_publikasi DESC
+     ORDER BY tanggal_publikasi DESC, id DESC
      LIMIT 3`
   );
   const announcements = announcementResult.rows;
@@ -66,7 +68,7 @@ export default async function HomePage() {
           </Link>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
           {popularBooks.map((book) => (
             <Link
               key={book.id}
@@ -92,23 +94,28 @@ export default async function HomePage() {
       </section>
 
       <section className="mt-10">
-        <h2 className="mb-4 text-xl font-bold text-amber-400">Pengumuman</h2>
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="text-xl font-bold text-amber-400">Pengumuman</h2>
+          <Link href="/pengumuman" className="text-sm text-amber-400 hover:underline">
+            Lihat semua
+          </Link>
+        </div>
 
         {announcements.length === 0 ? (
           <p className="text-slate-400">Belum ada pengumuman.</p>
         ) : (
           <ul className="space-y-3">
             {announcements.map((item) => (
-              <li key={item.id} className="rounded-xl bg-slate-900 p-4">
+              <li key={item.id} className="relative rounded-xl bg-slate-900 p-4 hover:ring-2 hover:ring-amber-500">
                 <p className="text-xs text-amber-400">
-                  {item.kategori} &middot;{" "}
-                  {new Date(item.tanggal_publikasi).toLocaleDateString("id-ID", {
-                    day: "numeric",
-                    month: "long",
-                    year: "numeric",
-                  })}
+                  {ANNOUNCEMENT_CATEGORIES[item.kategori] ?? item.kategori} &middot;{" "}
+                  {formatDate(item.tanggal_publikasi)}
                 </p>
-                <h3 className="font-semibold text-slate-100">{item.judul}</h3>
+                <h3 className="font-semibold text-slate-100">
+                  <Link href={`/pengumuman/${item.id}`} className="after:absolute after:inset-0">
+                    {item.judul}
+                  </Link>
+                </h3>
                 <p className="line-clamp-2 text-sm text-slate-400">{item.isi}</p>
               </li>
             ))}

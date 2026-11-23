@@ -16,6 +16,13 @@ export default async function AdminDashboard() {
         Kelola Kategori
       </Link>
 
+      <Link
+      href="/kelola/buku"
+      className="mt-4 inline-block rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900"
+      >
+        Kelola Buku 
+      </Link>
+
     </main>
   );
 }

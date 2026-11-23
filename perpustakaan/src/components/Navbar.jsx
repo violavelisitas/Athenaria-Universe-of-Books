@@ -7,12 +7,12 @@ import { logoutAction } from "@/app/login/actions";
 const publicMenu = [
   { label: "Beranda", path: "/" },
   { label: "Katalog", path: "/katalog" },
+  { label: "Pengumuman", path: "/pengumuman" },
 ];
 
 export default function Navbar({ user }) {
   const pathname = usePathname();
 
-  // Dashboard link is only shown to logged-in users.
   const menu = user
     ? [...publicMenu, { label: "Dashboard", path: "/dashboard" }]
     : publicMenu;

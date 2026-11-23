@@ -1,29 +1,32 @@
 "use client";
+
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { logoutAction } from "@/app/login/actions";
 
-const menu = [
-  { nama: "Beranda", path: "/" },
-  { nama: "Katalog", path: "/katalog" },
-  // { nama: "Usulan Buku", path: "/usulan" },
+const publicMenu = [
+  { label: "Beranda", path: "/" },
+  { label: "Katalog", path: "/katalog" },
 ];
 
-export default function Navbar() {
-
+export default function Navbar({ user }) {
   const pathname = usePathname();
 
-  return (
-    <nav className="w-full sticky top-0 z-50 bg-slate-900 text-slate-200">
-      <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
+  // Dashboard link is only shown to logged-in users.
+  const menu = user
+    ? [...publicMenu, { label: "Dashboard", path: "/dashboard" }]
+    : publicMenu;
 
-        <Link href="/" className="text-xl text-white font-bold">
-          Pustaka Senja
+  return (
+    <nav className="sticky top-0 z-50 w-full bg-slate-900 text-slate-200">
+      <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 px-4 py-3">
+        <Link href="/" className="text-xl font-bold text-white">
+          Athenaria
         </Link>
 
-        <ul className="flex gap-6">
+        <ul className="flex flex-wrap items-center gap-4">
           {menu.map((item) => {
-
-            const aktif =
+            const isActive =
               item.path === "/"
                 ? pathname === "/"
                 : pathname.startsWith(item.path);
@@ -33,19 +36,51 @@ export default function Navbar() {
                 <Link
                   href={item.path}
                   className={
-                    aktif
-                      ? "border-b-2 border-white font-semibold text-white-100"
-                      : "text-slate-400 hover:text-slate-100 hover:border-2 rounded-2xl p-1"
+                    isActive
+                      ? "border-b-2 border-white font-semibold text-white"
+                      : "rounded-2xl p-1 text-slate-400 hover:text-slate-100"
                   }
                 >
-                  {item.nama}
+                  {item.label}
                 </Link>
               </li>
             );
-
           })}
-        </ul>
 
+          {user ? (
+            <>
+              <li className="text-sm text-slate-400">
+                {user.name} ({user.role})
+              </li>
+              <li>
+                <form action={logoutAction}>
+                  <button
+                    type="submit"
+                    className="rounded-lg border border-slate-600 px-3 py-1 text-sm hover:bg-slate-800"
+                  >
+                    Keluar
+                  </button>
+                </form>
+              </li>
+            </>
+          ) : (
+            <>
+              <li>
+                <Link href="/login" className="text-slate-400 hover:text-slate-100">
+                  Masuk
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/register"
+                  className="rounded-lg bg-amber-500 px-3 py-1 text-sm font-semibold text-slate-900 hover:bg-amber-400"
+                >
+                  Daftar
+                </Link>
+              </li>
+            </>
+          )}
+        </ul>
       </div>
     </nav>
   );

@@ -229,3 +229,5 @@ CREATE INDEX idx_pengumuman_status
 
 CREATE INDEX idx_denda_status
     ON denda(status_pembayaran);
+
+

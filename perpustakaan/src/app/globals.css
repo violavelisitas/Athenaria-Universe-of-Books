@@ -24,3 +24,34 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Palette: overrides the default colors used across the whole app. */
+@theme {
+  --color-slate-800: #231d5c;
+  --color-slate-900: #16133f;
+  --color-slate-950: #0c0a29;
+
+  /* The old amber accent becomes soft lavender. */
+  --color-amber-400: #dcc6fb;
+  --color-amber-500: #c4a1f5;
+  --color-amber-600: #a47ee0;
+}
+
+body {
+  background: linear-gradient(
+      180deg,
+      #2b0f2b 0%,
+      #101a5e 35%,
+      #1a0f3d 70%,
+      #3a0f2e 100%
+    )
+    fixed;
+  color: #ece8fb;
+  overflow-x: clip;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display), Georgia, serif;
+}

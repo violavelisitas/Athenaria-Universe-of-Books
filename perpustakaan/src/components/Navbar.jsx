@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { logoutAction } from "@/app/login/actions";
 
 const publicMenu = [
-  { label: "Beranda", path: "/" },
+  // { label: "Beranda", path: "/" },
   { label: "Katalog", path: "/katalog" },
   { label: "Pengumuman", path: "/pengumuman" },
 ];
@@ -18,7 +18,7 @@ export default function Navbar({ user }) {
     : publicMenu;
 
   return (
-    <nav className="sticky top-0 z-50 w-full bg-slate-900 text-slate-200">
+    <nav className="sticky top-0 z-50 w-full bg-black/20 backdrop-blur-xs text-slate-200">
       <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 px-4 py-3">
         <Link href="/" className="text-xl font-bold text-white">
           Athenaria

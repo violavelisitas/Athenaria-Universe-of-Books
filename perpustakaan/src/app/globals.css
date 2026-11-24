@@ -32,18 +32,17 @@ body {
   --color-slate-950: #0c0a29;
 
   /* The old amber accent becomes soft lavender. */
-  --color-amber-400: #dcc6fb;
-  --color-amber-500: #c4a1f5;
-  --color-amber-600: #a47ee0;
+  --color-amber-400: #141f68;
+  --color-amber-500: rgb(11, 0, 28);  --color-amber-600: #a47ee0;
 }
 
 body {
   background: linear-gradient(
       180deg,
-      #2b0f2b 0%,
-      #101a5e 35%,
-      #1a0f3d 70%,
-      #3a0f2e 100%
+      #000a1c 0%,
+      #0f1851 35%,
+      #1d002a 70%,
+      #12000e 100%
     )
     fixed;
   color: #ece8fb;

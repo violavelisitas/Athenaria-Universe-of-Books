@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Hero from "@/components/Hero";
+import FeatureStrip from "@/components/FeatureStrip";
 import pool from "@/lib/db";
 import { formatDate } from "@/lib/format";
 import { ANNOUNCEMENT_CATEGORIES } from "@/lib/announcements";
@@ -7,10 +8,8 @@ import { ANNOUNCEMENT_CATEGORIES } from "@/lib/announcements";
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  // Top 5 books by number of approved or completed loans.
-  // LEFT JOIN keeps books with zero loans, so the list always has 5 items.
   const popularResult = await pool.query(
-    `SELECT b.id, b.judul, b.pengarang, b.link_sampul,
+    `SELECT b.id, b.judul, b.pengarang, b.link_sampul, b.sinopsis,
             COUNT(t.id) AS total_loans
      FROM buku b
      LEFT JOIN transaksi t
@@ -22,10 +21,9 @@ export default async function HomePage() {
   );
   const popularBooks = popularResult.rows.map((row) => ({
     ...row,
-    total_loans: Number(row.total_loans), // COUNT returns text in pg
+    total_loans: Number(row.total_loans),
   }));
 
-  // Latest published announcements only (drafts are never public).
   const announcementResult = await pool.query(
     `SELECT id, judul, isi, kategori, tanggal_publikasi
      FROM pengumuman
@@ -44,50 +42,53 @@ export default async function HomePage() {
         jamBuka="Senin - Jumat, 08.00 - 16.00"
       />
 
-      {/* Search: sends the keyword to the catalog page (?q=) */}
-      <form action="/katalog" method="GET" className="mt-8 flex gap-2">
+      <form action="/katalog" method="GET" className="mt-6 flex gap-2 md:hidden">
         <input
           type="text"
           name="q"
           placeholder="Cari judul atau pengarang..."
-          className="w-full rounded-lg bg-white px-4 py-2 text-black"
+          className="w-full rounded-full bg-white px-4 py-2 text-black"
         />
         <button
           type="submit"
-          className="rounded-lg bg-amber-500 px-5 py-2 font-semibold text-slate-900 hover:bg-amber-400"
+          className="rounded-full bg-amber-500 px-5 py-2 font-semibold text-slate-900"
         >
           Cari
         </button>
       </form>
 
       <section className="mt-10">
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-xl font-bold text-amber-400">Buku Terpopuler</h2>
+        <div className="mb-5 flex items-end justify-between">
+          <div>
+            <h2 className="text-3xl text-slate-50">✦ Buku Terpopuler</h2>
+            <p className="text-sm text-slate-400">Cerita-cerita yang paling sering dipinjam</p>
+          </div>
           <Link href="/katalog" className="text-sm text-amber-400 hover:underline">
-            Lihat semua
+            Lihat semua →
           </Link>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+        <div className="flex snap-x gap-4 overflow-x-auto pb-3">
           {popularBooks.map((book) => (
             <Link
               key={book.id}
               href={`/katalog/${book.id}`}
-              className="rounded-xl bg-slate-900 p-3 hover:ring-2 hover:ring-amber-500"
+              className="group flex min-w-[300px] flex-1 snap-start gap-4 rounded-2xl border border-indigo-950/20 bg-gradient-to-br from-indigo-950 to-rose-950/60 p-4 transition hover:border-violet-300"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={book.link_sampul}
                 alt={`Sampul ${book.judul}`}
-                className="aspect-[2/3] w-full rounded-lg object-cover"
+                className="h-40 w-28 shrink-0 rounded-lg object-cover shadow-lg"
               />
-              <h3 className="mt-2 line-clamp-2 font-semibold text-slate-100">
-                {book.judul}
-              </h3>
-              <p className="text-sm text-slate-400">{book.pengarang}</p>
-              <p className="mt-1 text-xs text-amber-400">
-                Dipinjam {book.total_loans}x
-              </p>
+              <div className="flex min-w-0 flex-col">
+                <h3 className="line-clamp-2 text-xl leading-tight text-slate-50">{book.judul}</h3>
+                <p className="text-sm text-amber-400">{book.pengarang}</p>
+                <p className="mt-2 line-clamp-3 text-sm text-slate-300">{book.sinopsis}</p>
+                <span className="mt-auto pt-2 text-sm text-slate-200 group-hover:underline">
+                  Lihat detail →
+                </span>
+              </div>
             </Link>
           ))}
         </div>
@@ -95,33 +96,38 @@ export default async function HomePage() {
 
       <section className="mt-10">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-xl font-bold text-amber-400">Pengumuman</h2>
+          <h2 className="text-3xl text-slate-50">Pengumuman</h2>
           <Link href="/pengumuman" className="text-sm text-amber-400 hover:underline">
-            Lihat semua
+            Lihat semua →
           </Link>
         </div>
 
         {announcements.length === 0 ? (
           <p className="text-slate-400">Belum ada pengumuman.</p>
         ) : (
-          <ul className="space-y-3">
+          <ul className="grid gap-3 md:grid-cols-3">
             {announcements.map((item) => (
-              <li key={item.id} className="relative rounded-xl bg-slate-900 p-4 hover:ring-2 hover:ring-amber-500">
+              <li
+                key={item.id}
+                className="relative rounded-2xl border border-white/10 bg-white/5 p-4 transition hover:border-violet-300/50"
+              >
                 <p className="text-xs text-amber-400">
                   {ANNOUNCEMENT_CATEGORIES[item.kategori] ?? item.kategori} &middot;{" "}
                   {formatDate(item.tanggal_publikasi)}
                 </p>
-                <h3 className="font-semibold text-slate-100">
+                <h3 className="mt-1 text-xl text-slate-50">
                   <Link href={`/pengumuman/${item.id}`} className="after:absolute after:inset-0">
                     {item.judul}
                   </Link>
                 </h3>
-                <p className="line-clamp-2 text-sm text-slate-400">{item.isi}</p>
+                <p className="mt-1 line-clamp-2 text-sm text-slate-400">{item.isi}</p>
               </li>
             ))}
           </ul>
         )}
       </section>
+
+      <FeatureStrip />
     </div>
   );
 }

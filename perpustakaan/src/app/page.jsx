@@ -42,7 +42,7 @@ export default async function HomePage() {
         jamBuka="Senin - Jumat, 08.00 - 16.00"
       />
 
-      <form action="/katalog" method="GET" className="mt-6 flex gap-2 md:hidden">
+      <form action="/katalog" method="GET" className="mt-6 flex gap-2">
         <input
           type="text"
           name="q"

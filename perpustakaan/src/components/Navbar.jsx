@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { logoutAction } from "@/app/login/actions";
 
 const publicMenu = [
-  { label: "Beranda", path: "/" },
+  // { label: "Beranda", path: "/" },
   { label: "Katalog", path: "/katalog" },
   { label: "Pengumuman", path: "/pengumuman" },
 ];
@@ -32,7 +32,7 @@ export default function Navbar({ user }) {
 
   return (
     <nav className="fixed top-0 z-50 w-full bg-black/30 text-slate-200 backdrop-blur-md">
-      <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-3">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8 py-3">
         <Link href="/" className="leading-tight" onClick={() => setIsOpen(false)}>
           <span
             className="block text-2xl tracking-wide text-amber-200"
@@ -45,7 +45,19 @@ export default function Navbar({ user }) {
           </span>
         </Link>
 
-        {/* Desktop and tablet (768px and wider) */}
+        <form
+          action="/katalog"
+          method="GET"
+          className="hidden sm:block flex-1 max-w-xs mx-4"
+        >
+          <input
+            name="q"
+            placeholder="Cari buku..."
+            className={`w-full ${searchInput}`}
+          />
+        </form>
+
+        {/* Desktop and tablet */}
         <div className="hidden items-center gap-5 md:flex">
           <ul className="flex items-center gap-5">
             {menu.map((item) => (
@@ -56,10 +68,6 @@ export default function Navbar({ user }) {
               </li>
             ))}
           </ul>
-
-          <form action="/katalog" method="GET" className="hidden lg:block">
-            <input name="q" placeholder="Cari buku..." className={`w-44 ${searchInput}`} />
-          </form>
 
           {user ? (
             <div className="flex items-center gap-3">
@@ -90,7 +98,7 @@ export default function Navbar({ user }) {
           )}
         </div>
 
-        {/* Hamburger button (phones) */}
+        {/* Hamburger button */}
         <button
           type="button"
           aria-label={isOpen ? "Tutup menu" : "Buka menu"}

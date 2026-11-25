@@ -11,7 +11,7 @@ export default function BookCard({ book }) {
       <img
         src={book.link_sampul}
         alt={`Sampul ${book.judul}`}
-        className="aspect-[2/3] w-full rounded-lg object-cover"
+        className="aspect-2/3 w-full rounded-lg object-cover"
       />
       <h3 className="mt-3 line-clamp-2 font-semibold text-slate-100">
         {/* Stretched link: the whole card is clickable without nesting links */}

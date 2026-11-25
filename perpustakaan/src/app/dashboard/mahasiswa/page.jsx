@@ -110,6 +110,9 @@ export default async function StudentDashboard({ searchParams }) {
                     )}
                   </p>
                   <div className="mt-3">
+                    {loan.extension_status === "Ditolak" && (
+                      <p className="mb-2 text-sm text-red-400">Perpanjangan Ditolak</p>
+                    )}
                     {canExtend && (
                       <form action={requestExtensionAction.bind(null, loan.id)}>
                         <SubmitButton
@@ -122,7 +125,7 @@ export default async function StudentDashboard({ searchParams }) {
                     )}
                     {!canExtend && extensionBlocked && (
                       <p className="text-sm text-slate-400">
-                        Perpanjangan: {loan.extension_status === "Menunggu" ? "menunggu persetujuan" : "sudah disetujui"}
+                        {loan.extension_status === "Menunggu" ? "Perpanjangan diajukan" : "Perpanjangan disetujui"}
                       </p>
                     )}
                     {!canExtend && !extensionBlocked && (

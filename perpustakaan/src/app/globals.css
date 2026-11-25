@@ -1,8 +1,9 @@
+
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #080D1C;
+  --foreground: #E4E9F5;
 }
 
 @theme inline {
@@ -12,45 +13,51 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-/* Palette: overrides the default colors used across the whole app. */
 @theme {
-  --color-slate-800: #231d5c;
-  --color-slate-900: #16133f;
-  --color-slate-950: #0c0a29;
+  /* Deep midnight navy */
+  --color-slate-950: #080D1C;
+  --color-slate-900: #101A35;
+  --color-slate-800: #1B2850;
+  --color-slate-400: #929FBD;
+  --color-slate-300: #C7CEE0;
 
-  /* The old amber accent becomes soft lavender. */
-  --color-amber-400: #141f68;
-  --color-amber-500: rgb(11, 0, 28);  --color-amber-600: #a47ee0;
+  /* Mystic indigo */
+  --color-amber-400: #293C70;
+  --color-amber-500: #1B2850;
+  --color-amber-600: #101A35;
 }
 
 body {
-  background: linear-gradient(
-      180deg,
-      #000a1c 0%,
-      #0f1851 35%,
-      #1d002a 70%,
-      #12000e 100%
-    )
-    fixed;
-  color: #ece8fb;
-  overflow-x: clip;
+  background:
+    radial-gradient(
+      55rem 35rem at 50% -15rem,
+      rgba(55, 75, 145, 0.25),
+      transparent 70%
+    ),
+    radial-gradient(
+      35rem 25rem at 100% 100%,
+      rgba(35, 55, 110, 0.12),
+      transparent 70%
+    ),
+    #080D1C;
+
+  background-attachment: fixed;
+  color: #E4E9F5;
+  font-family: Arial, Helvetica, sans-serif;
+  overflow-x: hidden;
 }
 
-h1,
-h2,
-h3 {
-  font-family: var(--font-display), Georgia, serif;
+h1, h2, h3 {
+  font-family: var(--font-display, Georgia), Georgia, serif;
+  color: #E8EDFA;
+}
+
+.swiper-pagination-bullet {
+  background: #C7CEE0;
+  opacity: 0.35;
+}
+
+.swiper-pagination-bullet-active {
+  background: #718BCB;
+  opacity: 1;
 }

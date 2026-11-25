@@ -1,0 +1,35 @@
+UPDATE buku AS b
+SET link_sampul = v.url
+FROM (VALUES
+  ('9780525559474', 'https://image.gramedia.net/rs:fit:0:0/f:webp/plain/https://cdn.gramedia.com/uploads/items/9786020649320_the_midnight_library_cov.jpg'),
+  ('9780735211292', 'https://cdn.gramedia.com/uploads/items/9786020633176_.Atomic_Habit.jpg'),
+  ('9780132350884', 'https://www.pearson.com/store/pmccommercewebservices/v2/medias/size-W370-A1000-60-93-90-A100060939014-A100060939014-Lrg.jpg?context=bWFzdGVyfGltYWdlc3wzMjIyNXxpbWFnZS9qcGVnfHN5cy1tYXN0ZXIvaW1hZ2VzL2gwZi9oMTIvMTU1ODY2OTAxMDUzNzQvc2l6ZV9XMzcwXy9BMTAwMC82MC85My85MC9BMTAwMDYwOTM5MDE0L0ExMDAwNjA5MzkwMTRfTHJnLmpwZ3w1N2Y5ZjZmZjZkNzhjYTE4ZGM2MmM4OWRiYzVlMmY2NjNiNjFhYTk2YmMyZTc3OTE2NjRiYzYxODY0NWZjZTIz&imwidth=3840'),
+  ('9780062316097', 'https://m.media-amazon.com/images/I/81YfoqcSp6L._UF1000,1000_QL80_.jpg'),
+  ('9780857197689', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ6SNahMT8YFnQ59XHVh5a0NXHphg0MYY5mdCdeyoQjcoS_2cZaad31xY5p&s=10'),
+  ('9780553380163', 'https://m.media-amazon.com/images/I/A1WTURKqwyL._UF1000,1000_QL80_.jpg'),
+  ('9780451524935', 'https://cdn.gramedia.com/uploads/picture_meta/2024/2/19/drvhidhjtaiv3ks9ae6tb2.jpg'),
+  ('9780135957059', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS--DvHfyFvCGv7PNlQ2ytjzrrWyQOPQT0UIYoNlcqmzIA3prNTLSFPy4o&s=10'),
+  ('9780374533557', 'https://cdn.gramedia.com/uploads/items/9786020637181_THINKING_FAST_AND_SLOW_C_1_4-1.jpg'),
+  ('9780061122415', 'https://cdn.gramedia.com/uploads/products/i-x2529hct.jpeg'),
+  ('9780000000019', 'https://bukukita.com/babacms/displaybuku/111644_f.jpg'),
+  ('9780000000026', 'https://cdn.gramedia.com/uploads/items/9786020310367_LITTLE_WOMEN.jpg'),
+  ('9780000000033', 'https://upload.wikimedia.org/wikipedia/commons/7/7a/The_Great_Gatsby_Cover_1925_Retouched.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=original'),
+  ('9780000000040', 'https://m.media-amazon.com/images/I/913R4srHS5L._AC_UF894,1000_QL80_.jpg'),
+  ('9780000000057', 'https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1181145582i/1118668.jpg'),
+  ('9780000000064', 'https://p16-oec-sg.ibyteimg.com/tos-alisg-i-aphluv4xwc-sg/img/VqbcmM/2024/3/30/7c5425ee-5451-455b-9ab1-0f04f640ef6b.jpg~tplv-aphluv4xwc-resize-jpeg:700:0.jpg'),
+  ('9780000000071', 'https://kepustakaanpopulergra.media/wp-content/uploads/2025/10/WhatsApp-Image-2025-10-20-at-11.11.32.jpeg'),
+  ('9780000000088', 'https://assets.cambridge.org/97811080/05487/large_cover/9781108005487i.jpg'),
+  ('9780000000095', 'https://m.media-amazon.com/images/I/81Yza7XmfjL._AC_UF1000,1000_QL80_.jpg'),
+  ('9780000000101', 'https://miro.medium.com/v2/resize:fit:1400/1*Q_tGfdE4yWAAZth68bC26g.jpeg'),
+  ('9780000000118', 'https://down-id.img.susercontent.com/file/id-11134207-8224r-mg9hwl6i6cr229'),
+  ('9780000000125', 'https://aksh.dev/blog/book-review-designing-data-intensive-applications/cover.webp'),
+  ('9780000000132', 'https://m.media-amazon.com/images/I/914-sUgELZL._AC_UF1000,1000_QL80_.jpg'),
+  ('9780000000149', 'https://backcreekbooks.cdn.bibliopolis.com/pictures/1545_1.jpg?width=768&height=1000&fit=bounds&auto=webp&v=1707884234'),
+  ('9780000000156', 'https://m.media-amazon.com/images/I/71qeWx83sxL._AC_UF1000,1000_QL80_.jpg'),
+  ('9780000000163', 'https://m.media-amazon.com/images/I/71Zb-D8NaGL._AC_UF1000,1000_QL80_.jpg'),
+  ('9780000000170', 'https://m.media-amazon.com/images/I/71pqZChaJkL._AC_UF894,1000_QL80_.jpg'),
+  ('9780000000187', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRWvox1YVmw5mhFo-YizVlLeGoJ6jVQf6WMc5ccLqGsFw&s=10'),
+  ('9780000000194', 'https://miro.medium.com/v2/1*zPcYnf6Y7DNj0PpMTlC-3g.jpeg'),
+  ('9780000000200', 'https://gregmckeown.com/wp-content/uploads/2011/08/book-1225x1600.jpg')
+) AS v(isbn, url)
+WHERE b.isbn = v.isbn;

@@ -15,7 +15,7 @@ export default async function EditUserPage({ params }) {
   if (!userId) notFound();
 
   const result = await pool.query(
-    "SELECT id, nama, email, role, nim FROM users WHERE id = $1",
+    "SELECT id, nama, email, role, nim, aktif FROM users WHERE id = $1",
     [userId]
   );
   const user = result.rows[0];
@@ -32,6 +32,7 @@ export default async function EditUserPage({ params }) {
             email: user.email,
             role: user.role,
             identityNumber: user.nim ?? "",
+            active: user.aktif ? "true" : "false",
           }}
           submitLabel="Simpan perubahan"
           isEdit

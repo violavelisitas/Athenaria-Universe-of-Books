@@ -1,0 +1,5 @@
+URUTAN PASANG (penting, jangan dibalik):
+1. Jalankan sql/migration_02.sql di pgAdmin (Query Tool, database perpustakaan).
+2. Salin isi folder src ke perpustakaan\src (timpa jika ditanya).
+3. Edit manual dua baris kecil (dijelaskan di chat).
+4. npm run build, lalu commit dan push.

@@ -60,8 +60,8 @@ export default async function HomePage() {
       <section className="mt-10">
         <div className="mb-5 flex items-end justify-between">
           <div>
-            <h2 className="text-3xl text-slate-50">✦ Buku Terpopuler</h2>
-            <p className="text-sm text-slate-400">Cerita-cerita yang paling sering dipinjam</p>
+            <h2 className="text-3xl text-slate-50"><span className="text-amber-500">✦</span> Buku Terpopuler</h2>            
+            {/* <p className="text-sm text-slate-400">Cerita-cerita yang paling sering dipinjam</p> */}
           </div>
           <Link href="/katalog" className="text-sm text-amber-400 hover:underline">
             Lihat semua →
@@ -73,7 +73,7 @@ export default async function HomePage() {
             <Link
               key={book.id}
               href={`/katalog/${book.id}`}
-              className="group flex min-w-[300px] flex-1 snap-start gap-4 rounded-2xl border border-indigo-950/20 bg-gradient-to-br from-indigo-950 to-rose-950/60 p-4 transition hover:border-violet-300"
+              className="group flex min-w-[300px] flex-1 snap-start gap-4 rounded-2xl border border-amber-500/20 bg-white/[0.04] p-4 transition hover:border-amber-500/50"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img

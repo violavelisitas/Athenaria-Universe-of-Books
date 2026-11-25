@@ -20,9 +20,9 @@ export default function ReviewForm({ action }) {
         <label htmlFor="rating" className="mb-1 block text-sm text-slate-300">Rating</label>
         <select id="rating" name="rating" defaultValue={values.rating} className={inputClass}>
           <option value="">Pilih rating</option>
-          {[5, 4, 3, 2, 1].map((star) => (
+          {["⭐⭐⭐⭐⭐", "⭐⭐⭐⭐", "⭐⭐⭐", "⭐⭐", "⭐"].map((star) => (
             <option key={star} value={star}>
-              {star} bintang
+              {star}
             </option>
           ))}
         </select>

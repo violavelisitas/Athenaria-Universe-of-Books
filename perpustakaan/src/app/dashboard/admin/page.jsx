@@ -42,7 +42,7 @@ export default async function AdminDashboard() {
       <h1 className="text-2xl font-bold text-amber-400">Dashboard Admin</h1>
       <p className="mb-6 mt-1 text-slate-300">Halo, {user.name}.</p>
 
-      <section className="mb-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+      <section className="mb-8 grid grid-cols-2 gap-3 lg:grid-cols-5">
         {stats.map((stat) => (
           <div key={stat.label} className="rounded-xl bg-slate-900 p-4 text-center">
             <p className="text-2xl font-bold text-amber-400">{stat.value}</p>

@@ -36,8 +36,8 @@ export async function createSession(userId) {
 }
 
 // Returns { id, name, email, role } or null when nobody is logged in.
-// cache() makes this query run once per request, even when it is
-// called from both the layout and the page.
+// A deactivated account (aktif = false) is treated as logged out,
+// so deactivating a user takes effect immediately.
 export const getCurrentUser = cache(async () => {
   const cookieStore = await cookies();
   const token = cookieStore.get(SESSION_COOKIE_NAME)?.value;
@@ -47,7 +47,7 @@ export const getCurrentUser = cache(async () => {
     `SELECT u.id, u.nama AS name, u.email, u.role
      FROM sesi s
      JOIN users u ON u.id = s.pengguna_id
-     WHERE s.token_hash = $1 AND s.kadaluarsa > NOW()`,
+     WHERE s.token_hash = $1 AND s.kadaluarsa > NOW() AND u.aktif = TRUE`,
     [hashToken(token)]
   );
   return result.rows[0] ?? null;

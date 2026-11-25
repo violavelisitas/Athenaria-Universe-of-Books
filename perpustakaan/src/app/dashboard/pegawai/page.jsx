@@ -118,7 +118,7 @@ export default async function StaffDashboard({ searchParams }) {
 
       {flash && <Notice tone={flash[0]}>{flash[1]}</Notice>}
 
-      <div className="mb-8 grid gap-3 sm:grid-cols-4">
+      <div className="mb-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
         {[
           ["Menunggu persetujuan", pending.length],
           ["Perpanjangan diajukan", extensions.length],

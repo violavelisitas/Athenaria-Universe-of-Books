@@ -22,19 +22,19 @@ function readUserForm(formData, isCreate) {
     email: text("email").toLowerCase(),
     role: text("role"),
     identityNumber: text("identityNumber"),
+    active: text("active") === "false" ? "false" : "true",
   };
   const password = String(formData.get("password") ?? "");
 
+  // Every field is required (task: "semua data wajib diisi").
   const errors = {};
   if (values.name.length < 3) errors.name = "Nama minimal 3 karakter.";
   if (!isValidEmail(values.email)) errors.email = "Format email tidak valid.";
   if (!ROLES.includes(values.role)) errors.role = "Pilih role.";
 
-  // Students must have an ID number (NIM). Staff and admins may leave it empty.
-  const idPattern = /^[A-Za-z0-9]{6,20}$/;
-  if (values.role === "mahasiswa" && !values.identityNumber) {
-    errors.identityNumber = "NIM wajib diisi untuk mahasiswa.";
-  } else if (values.identityNumber && !idPattern.test(values.identityNumber)) {
+  if (!values.identityNumber) {
+    errors.identityNumber = "NIM / nomor identitas wajib diisi.";
+  } else if (!/^[A-Za-z0-9]{6,20}$/.test(values.identityNumber)) {
     errors.identityNumber = "Nomor identitas hanya huruf/angka, 6 sampai 20 karakter.";
   }
 
@@ -50,15 +50,15 @@ function readUserForm(formData, isCreate) {
 async function findDuplicateErrors(values, excludeId = null) {
   const result = await pool.query(
     `SELECT email, nim FROM users
-     WHERE (email = $1 OR ($2::text IS NOT NULL AND nim = $2))
+     WHERE (email = $1 OR nim = $2)
        AND ($3::int IS NULL OR id <> $3)`,
-    [values.email, values.identityNumber || null, excludeId]
+    [values.email, values.identityNumber, excludeId]
   );
 
   const errors = {};
   for (const row of result.rows) {
     if (row.email === values.email) errors.email = "Email sudah terdaftar.";
-    if (values.identityNumber && row.nim === values.identityNumber) {
+    if (row.nim === values.identityNumber) {
       errors.identityNumber = "Nomor identitas sudah terdaftar.";
     }
   }
@@ -77,9 +77,16 @@ export async function createUserAction(previousState, formData) {
   const passwordHash = await bcrypt.hash(password, 10);
   try {
     await pool.query(
-      `INSERT INTO users (nama, email, password, role, nim)
-       VALUES ($1, $2, $3, $4, $5)`,
-      [values.name, values.email, passwordHash, values.role, values.identityNumber || null]
+      `INSERT INTO users (nama, email, password, role, nim, aktif)
+       VALUES ($1, $2, $3, $4, $5, $6)`,
+      [
+        values.name,
+        values.email,
+        passwordHash,
+        values.role,
+        values.identityNumber,
+        values.active === "true",
+      ]
     );
   } catch (error) {
     if (error.code === "23505") {
@@ -101,30 +108,35 @@ export async function updateUserAction(id, previousState, formData) {
 
   const { values, errors, password } = readUserForm(formData, false);
 
-  // An admin cannot change their own role (it could lock everyone out).
+  // An admin cannot change their own role or deactivate themselves
+  // (it could lock everyone out).
   if (userId === admin.id && values.role !== admin.role) {
     errors.role = "Kamu tidak dapat mengubah role akunmu sendiri.";
+  }
+  if (userId === admin.id && values.active === "false") {
+    errors.active = "Kamu tidak dapat menonaktifkan akunmu sendiri.";
   }
   if (Object.keys(errors).length > 0) return { errors, values };
 
   const duplicateErrors = await findDuplicateErrors(values, userId);
   if (Object.keys(duplicateErrors).length > 0) return { errors: duplicateErrors, values };
 
+  const isActive = values.active === "true";
   try {
     if (password) {
       const passwordHash = await bcrypt.hash(password, 10);
       await pool.query(
         `UPDATE users
-         SET nama = $1, email = $2, role = $3, nim = $4, password = $5
-         WHERE id = $6`,
-        [values.name, values.email, values.role, values.identityNumber || null, passwordHash, userId]
+         SET nama = $1, email = $2, role = $3, nim = $4, aktif = $5, password = $6
+         WHERE id = $7`,
+        [values.name, values.email, values.role, values.identityNumber, isActive, passwordHash, userId]
       );
     } else {
       await pool.query(
         `UPDATE users
-         SET nama = $1, email = $2, role = $3, nim = $4
-         WHERE id = $5`,
-        [values.name, values.email, values.role, values.identityNumber || null, userId]
+         SET nama = $1, email = $2, role = $3, nim = $4, aktif = $5
+         WHERE id = $6`,
+        [values.name, values.email, values.role, values.identityNumber, isActive, userId]
       );
     }
   } catch (error) {

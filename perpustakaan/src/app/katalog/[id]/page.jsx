@@ -19,8 +19,6 @@ const MESSAGES = {
   "no-stock": ["error", "Stok buku ini sedang habis."],
 };
 
-// Decides what the borrow area shows. The server action checks the same
-// rules again, so hiding a button is only a convenience, not the protection.
 async function getBorrowState(user, book) {
   if (!user) return { type: "guest" };
   if (user.role !== "mahasiswa") return { type: "staff" };
@@ -108,7 +106,7 @@ export default async function BookDetailPage({ params, searchParams }) {
           <img
             src={book.link_sampul}
             alt={`Sampul ${book.judul}`}
-            className="aspect-[2/3] w-full rounded-xl object-cover"
+            className="mx-auto aspect-[2/3] w-full max-w-[220px] rounded-xl object-cover md:max-w-none"
           />
         </div>
 

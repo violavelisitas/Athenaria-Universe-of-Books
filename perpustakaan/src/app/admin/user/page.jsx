@@ -29,7 +29,7 @@ export default async function UserListPage({ searchParams }) {
 
   // role::text works whether the column is VARCHAR or an enum type.
   const result = await pool.query(
-    `SELECT id, nama, email, nim, role
+    `SELECT id, nama, email, nim, role, aktif
      FROM users
      WHERE ($1::text IS NULL OR role::text = $1)
        AND ($2::text IS NULL
@@ -84,6 +84,7 @@ export default async function UserListPage({ searchParams }) {
               <th className="py-2 pr-3">Email</th>
               <th className="py-2 pr-3">NIM / ID</th>
               <th className="py-2 pr-3">Role</th>
+              <th className="py-2 pr-3">Status</th>
               <th className="py-2">Aksi</th>
             </tr>
           </thead>
@@ -94,6 +95,15 @@ export default async function UserListPage({ searchParams }) {
                 <td className="py-2 pr-3">{user.email}</td>
                 <td className="py-2 pr-3">{user.nim ?? "-"}</td>
                 <td className="py-2 pr-3">{user.role}</td>
+                <td className="py-2 pr-3">
+                  <span
+                    className={`inline-block rounded-full px-2 py-0.5 text-xs ${
+                      user.aktif ? "bg-green-900 text-green-200" : "bg-slate-700 text-slate-300"
+                    }`}
+                  >
+                    {user.aktif ? "Aktif" : "Nonaktif"}
+                  </span>
+                </td>
                 <td className="py-2">
                   <div className="flex items-center gap-3">
                     <Link href={`/admin/user/${user.id}/edit`} className="text-sm text-amber-400 hover:underline">

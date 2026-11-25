@@ -6,17 +6,14 @@ import { Autoplay, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
 
-// All banner files must have the same proportions (about 3.2 : 1,
-// for example 1600x500). Slides with different ratios make the page jump.
-const BANNERS = ["/main_banner.png", "/coklat.jpeg", "/navy.png", "ungu2.jpg"];
+const BANNERS = ["/main_banner.png", "/navy.png", "ungu2.jpg"];
 
 export default function Hero({ nama, slogan, lokasi, jamBuka }) {
   const hasManySlides = BANNERS.length > 1;
 
   return (
-    <section className="relative left-1/2 w-screen -translate-x-1/2 overflow-hidden -mt-8">
-      {/* The banners already contain the brand text, so the title is
-          only kept for screen readers. */}
+    <section className="relative left-1/2 w-screen -translate-x-1/2 overflow-hidden -mt-1">
+
       <h1 className="sr-only">
         {nama}: {slogan}
       </h1>
@@ -33,13 +30,12 @@ export default function Hero({ nama, slogan, lokasi, jamBuka }) {
       >
         {BANNERS.map((src, index) => (
           <SwiperSlide key={src}>
-            {/* h-auto keeps the full image visible, nothing is cropped */}
+            <div className="relative">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={src}
-              alt={`Banner Athenaria ${index + 1}`}
-              className="block h-auto w-full translate-y-0.5"
-            />
+              <img src={src} alt={`Banner Athenaria ${index + 1}`} className="block h-auto w-full object-cover object-center sm:h-auto" />
+              {/* Fade into the page background so there is no hard edge */}
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#0d0b1a] to-transparent" />
+            </div>
           </SwiperSlide>
         ))}
       </Swiper>

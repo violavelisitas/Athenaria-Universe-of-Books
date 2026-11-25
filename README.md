@@ -24,6 +24,7 @@ Pegawai dan admin mengelola koleksi, peminjaman, pengumuman, dan pengguna.
    2. `seed.sql` (data awal)
    3. `migration.sql` (kolom dan aturan tambahan)
    4. `seed_extra.sql` (data contoh transaksi dan ulasan)
+   5. `migration_02.sql` (kolom status akun dan nomor identitas pegawai/admin)
 4. Masuk ke folder aplikasi dan pasang dependensi:
    ```
    cd perpustakaan
@@ -56,13 +57,22 @@ Password semua akun: `athenaria123`
 - **Guest**: beranda (5 buku terpopuler, pengumuman terbaru, pencarian), katalog (cari, filter kategori, urut tahun/rating), detail buku, pengumuman.
 - **Mahasiswa**: mengajukan peminjaman, memantau status, mengajukan perpanjangan (1 kali, +7 hari, sebelum jatuh tempo), melihat denda, menulis ulasan setelah peminjaman selesai.
 - **Pegawai**: CRUD buku, CRUD pengumuman, menyetujui atau menolak peminjaman (dengan alasan), konfirmasi pengembalian, memproses perpanjangan, mencatat pelunasan denda.
-- **Admin**: kelola user, kategori, buku, dan pengumuman; statistik; riwayat seluruh transaksi.
+- **Admin**: kelola user (termasuk status aktif/nonaktif), kategori, buku, dan pengumuman; statistik; riwayat seluruh transaksi dan ekspor CSV.
+
+## Endpoint (Route Handler)
+
+| Endpoint | Akses | Fungsi |
+|---|---|---|
+| `GET /api/buku?q=&category=&sort=&limit=` | Publik | Daftar buku dalam JSON (cari, filter kategori, urut `title`/`year`/`rating`) |
+| `GET /api/admin/transaksi/export` | Admin | Unduh seluruh transaksi sebagai CSV (dibuka di Excel). Mengembalikan 401 jika belum login dan 403 jika bukan admin |
 
 ## Aturan penting
 
 - Stok berkurang saat peminjaman disetujui dan bertambah saat pengembalian dikonfirmasi, dalam satu transaksi database.
 - Denda dihitung otomatis oleh server: hari terlambat x tarif denda per hari. Mahasiswa dengan denda tertunggak tidak bisa mengajukan peminjaman baru.
-- Setiap halaman dan Server Action memeriksa peran pengguna di sisi server.
+- Setiap halaman, Server Action, dan Route Handler memeriksa peran pengguna di sisi server.
+- Akun yang dinonaktifkan Admin tidak bisa login, dan sesi yang sedang berjalan langsung tidak berlaku.
+- Email pendaftaran mahasiswa harus berakhiran `.ac.id`.
 
 ## Struktur folder
 

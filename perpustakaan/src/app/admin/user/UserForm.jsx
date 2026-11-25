@@ -3,7 +3,13 @@
 import { useActionState } from "react";
 import Link from "next/link";
 
-const EMPTY_VALUES = { name: "", email: "", role: "mahasiswa", identityNumber: "" };
+const EMPTY_VALUES = {
+  name: "",
+  email: "",
+  role: "mahasiswa",
+  identityNumber: "",
+  active: "true",
+};
 const inputClass = "w-full rounded-lg bg-white px-3 py-2 text-black";
 
 function Field({ id, label, error, hint, children }) {
@@ -39,19 +45,28 @@ export default function UserForm({
         <input id="email" name="email" type="email" defaultValue={values.email} className={inputClass} />
       </Field>
 
-      <Field id="role" label="Role" error={errors.role}>
-        <select id="role" name="role" defaultValue={values.role} className={inputClass}>
-          <option value="mahasiswa">Mahasiswa</option>
-          <option value="pegawai">Pegawai</option>
-          <option value="admin">Admin</option>
-        </select>
-      </Field>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Field id="role" label="Role" error={errors.role}>
+          <select id="role" name="role" defaultValue={values.role} className={inputClass}>
+            <option value="mahasiswa">Mahasiswa</option>
+            <option value="pegawai">Pegawai</option>
+            <option value="admin">Admin</option>
+          </select>
+        </Field>
+
+        <Field id="active" label="Status akun" error={errors.active}>
+          <select id="active" name="active" defaultValue={values.active} className={inputClass}>
+            <option value="true">Aktif</option>
+            <option value="false">Nonaktif</option>
+          </select>
+        </Field>
+      </div>
 
       <Field
         id="identityNumber"
         label="NIM / nomor identitas"
         error={errors.identityNumber}
-        hint="Wajib untuk mahasiswa. Boleh kosong untuk pegawai dan admin."
+        hint="Wajib diisi dan harus unik (untuk pegawai dan admin, isi nomor pegawai)."
       >
         <input
           id="identityNumber"

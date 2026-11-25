@@ -18,9 +18,14 @@ export default async function ManageBooksPage({ searchParams }) {
   const error = params.error;
   const keyword = params.q?.trim() || null;
 
+  // jumlah_stok is the number of copies on the shelf (available).
+  // Copies currently on loan are counted from 'Sedang Dipinjam' transactions,
+  // so total stock = available + on loan.
   const result = await pool.query(
     `SELECT b.id, b.judul, b.pengarang, b.isbn, b.jumlah_stok,
-            b.link_sampul, k.nama AS kategori
+            b.link_sampul, k.nama AS kategori,
+            (SELECT COUNT(*) FROM transaksi t
+              WHERE t.buku_id = b.id AND t.status = 'Sedang Dipinjam') AS on_loan
      FROM buku b
      JOIN kategori k ON k.id = b.kategori_id
      WHERE $1::text IS NULL
@@ -29,7 +34,11 @@ export default async function ManageBooksPage({ searchParams }) {
      ORDER BY b.judul ASC`,
     [keyword]
   );
-  const books = result.rows;
+  const books = result.rows.map((row) => ({
+    ...row,
+    on_loan: Number(row.on_loan), // COUNT returns text in pg
+    total_stock: Number(row.jumlah_stok) + Number(row.on_loan),
+  }));
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-8 text-slate-100">
@@ -71,7 +80,8 @@ export default async function ManageBooksPage({ searchParams }) {
               <th className="py-2 pr-3">Sampul</th>
               <th className="py-2 pr-3">Judul</th>
               <th className="py-2 pr-3">Kategori</th>
-              <th className="py-2 pr-3">Stok</th>
+              <th className="py-2 pr-3">Stok tersedia</th>
+              <th className="py-2 pr-3">Stok total</th>
               <th className="py-2">Aksi</th>
             </tr>
           </thead>
@@ -94,6 +104,14 @@ export default async function ManageBooksPage({ searchParams }) {
                 </td>
                 <td className="py-2 pr-3">{book.kategori}</td>
                 <td className="py-2 pr-3">{book.jumlah_stok}</td>
+                <td className="py-2 pr-3">
+                  {book.total_stock}
+                  {book.on_loan > 0 && (
+                    <span className="block text-xs text-slate-400">
+                      {book.on_loan} dipinjam
+                    </span>
+                  )}
+                </td>
                 <td className="py-2">
                   <div className="flex items-center gap-3">
                     <Link

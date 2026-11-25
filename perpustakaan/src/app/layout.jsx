@@ -11,8 +11,8 @@ const display = Cormorant_Garamond({
 });
 
 export const metadata = {
-  title: "Pustaka Senja",
-  description: "Ruang baca dan perpustakaan komunitas",
+  title: "Athenaria | Universe of Books",
+  description: "Perpustakaan digital: temukan buku, ajukan pinjam, pantau denda.",
 };
 
 export default async function RootLayout({ children }) {
@@ -22,10 +22,10 @@ export default async function RootLayout({ children }) {
     <html
       lang="id"
     >
-      <body className={`${display.variable}flex min-h-screen flex-col`}>
+      <body className={`${display.variable} flex min-h-screen flex-col`}>
         <Navbar user={user} />
         
-        <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-6">
+        <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-6 pt-16">
           {children}
         </main>
 

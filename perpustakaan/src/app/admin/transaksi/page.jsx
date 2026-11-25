@@ -36,7 +36,16 @@ export default async function TransactionLogPage({ searchParams }) {
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-8 text-slate-100">
-      <h1 className="mb-6 text-2xl font-bold text-amber-400">Riwayat Transaksi</h1>
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+        <h1 className="text-2xl font-bold text-amber-400">Riwayat Transaksi</h1>
+        {/* Plain link: it downloads a file from the route handler. */}
+        <a
+          href="/api/admin/transaksi/export"
+          className="rounded-lg border border-amber-500 px-4 py-2 text-sm text-amber-400 hover:bg-slate-800"
+        >
+          Unduh CSV (Excel)
+        </a>
+      </div>
 
       <form method="GET" className="mb-4 grid gap-2 sm:grid-cols-4">
         <input

@@ -1,13 +1,17 @@
+
 import Link from "next/link";
 import Hero from "@/components/Hero";
 import FeatureStrip from "@/components/FeatureStrip";
 import pool from "@/lib/db";
 import { formatDate } from "@/lib/format";
 import { ANNOUNCEMENT_CATEGORIES } from "@/lib/announcements";
+import { redirectStaffToDashboard } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
+  await redirectStaffToDashboard();
+
   const popularResult = await pool.query(
     `SELECT b.id, b.judul, b.pengarang, b.link_sampul, b.sinopsis,
             COUNT(t.id) AS total_loans
@@ -19,6 +23,7 @@ export default async function HomePage() {
      ORDER BY total_loans DESC, b.judul ASC
      LIMIT 5`
   );
+
   const popularBooks = popularResult.rows.map((row) => ({
     ...row,
     total_loans: Number(row.total_loans),
@@ -31,6 +36,7 @@ export default async function HomePage() {
      ORDER BY tanggal_publikasi DESC, id DESC
      LIMIT 3`
   );
+
   const announcements = announcementResult.rows;
 
   return (
@@ -47,11 +53,11 @@ export default async function HomePage() {
           type="text"
           name="q"
           placeholder="Cari judul atau pengarang..."
-          className="w-full rounded-full bg-white px-4 py-2 text-black"
+          className="w-full rounded-full bg-slate-900 px-4 py-2 placeholder:text-slate-200"
         />
         <button
           type="submit"
-          className="rounded-full bg-amber-500 px-5 py-2 font-semibold text-slate-900"
+          className="rounded-full bg-slate-900 px-5 py-2 font-semibold text-slate-900 hover:bg-slate-800"
         >
           Cari
         </button>
@@ -60,8 +66,9 @@ export default async function HomePage() {
       <section className="mt-10">
         <div className="mb-5 flex items-end justify-between">
           <div>
-            <h2 className="text-3xl text-slate-50"><span className="text-amber-500">✦</span> Buku Terpopuler</h2>            
-            {/* <p className="text-sm text-slate-400">Cerita-cerita yang paling sering dipinjam</p> */}
+            <h2 className="text-3xl text-slate-50">
+              <span className="text-amber-500">✦</span> Buku Terpopuler
+            </h2>
           </div>
           <Link href="/katalog" className="text-sm text-amber-400 hover:underline">
             Lihat semua →
@@ -75,16 +82,19 @@ export default async function HomePage() {
               href={`/katalog/${book.id}`}
               className="group flex min-w-[300px] flex-1 snap-start gap-4 rounded-2xl border border-amber-500/20 bg-white/[0.04] p-4 transition hover:border-amber-500/50"
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={book.link_sampul}
                 alt={`Sampul ${book.judul}`}
                 className="h-40 w-28 shrink-0 rounded-lg object-cover shadow-lg"
               />
               <div className="flex min-w-0 flex-col">
-                <h3 className="line-clamp-2 text-xl leading-tight text-slate-50">{book.judul}</h3>
+                <h3 className="line-clamp-2 text-xl leading-tight text-slate-50">
+                  {book.judul}
+                </h3>
                 <p className="text-sm text-amber-400">{book.pengarang}</p>
-                <p className="mt-2 line-clamp-3 text-sm text-slate-300">{book.sinopsis}</p>
+                <p className="mt-2 line-clamp-3 text-sm text-slate-300">
+                  {book.sinopsis}
+                </p>
                 <span className="mt-auto pt-2 text-sm text-slate-200 group-hover:underline">
                   Lihat detail →
                 </span>
@@ -116,11 +126,16 @@ export default async function HomePage() {
                   {formatDate(item.tanggal_publikasi)}
                 </p>
                 <h3 className="mt-1 text-xl text-slate-50">
-                  <Link href={`/pengumuman/${item.id}`} className="after:absolute after:inset-0">
+                  <Link
+                    href={`/pengumuman/${item.id}`}
+                    className="after:absolute after:inset-0"
+                  >
                     {item.judul}
                   </Link>
                 </h3>
-                <p className="mt-1 line-clamp-2 text-sm text-slate-400">{item.isi}</p>
+                <p className="mt-1 line-clamp-2 text-sm text-slate-400">
+                  {item.isi}
+                </p>
               </li>
             ))}
           </ul>

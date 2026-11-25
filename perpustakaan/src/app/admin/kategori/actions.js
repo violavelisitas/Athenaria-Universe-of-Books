@@ -100,7 +100,7 @@ export async function deleteCategoryAction(id) {
   const categoryId = parseId(id);
   if (!categoryId) redirect(LIST_PATH);
 
-  // A category that still has books cannot be deleted.
+  // A category that still has books cannot be deleted
   const usage = await pool.query(
     "SELECT COUNT(*) AS total FROM buku WHERE kategori_id = $1",
     [categoryId]

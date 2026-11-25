@@ -4,7 +4,6 @@ import { getCurrentUser } from "@/lib/auth";
 import LoginForm from "./LoginForm";
 
 export default async function LoginPage() {
-  // Logged-in users do not need the login page.
   if (await getCurrentUser()) redirect("/dashboard");
 
   return (

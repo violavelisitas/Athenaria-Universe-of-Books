@@ -27,7 +27,6 @@ export default async function UserListPage({ searchParams }) {
   const role = ROLES.includes(params.role) ? params.role : null;
   const keyword = params.q?.trim() || null;
 
-  // role::text works whether the column is VARCHAR or an enum type.
   const result = await pool.query(
     `SELECT id, nama, email, nim, role, aktif
      FROM users

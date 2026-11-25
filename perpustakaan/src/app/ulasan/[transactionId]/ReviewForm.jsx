@@ -6,11 +6,9 @@ import Link from "next/link";
 const inputClass = "w-full rounded-lg bg-white px-3 py-2 text-black";
 const STAR_COUNT = 5;
 
-// Five clickable stars. Click star N and stars 1..N turn yellow.
-// The chosen number goes to the server through a hidden input.
 function StarRating({ value, onChange }) {
   const [hovered, setHovered] = useState(0);
-  const shown = hovered || value; // hover previews, click confirms
+  const shown = hovered || value;
 
   return (
     <div
@@ -33,7 +31,7 @@ function StarRating({ value, onChange }) {
             onFocus={() => setHovered(star)}
             onBlur={() => setHovered(0)}
             className={`text-4xl leading-none transition-colors ${
-              star <= shown ? "text-amber-500" : "text-slate-600"
+              star <= shown ? "text-yellow-300" : "text-blue-950"
             }`}
           >
             ★

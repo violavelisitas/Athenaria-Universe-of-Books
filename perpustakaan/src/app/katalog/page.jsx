@@ -1,11 +1,11 @@
 import pool from "@/lib/db";
 import { parseId } from "@/lib/helpers";
 import BookCard from "@/components/BookCard";
+import CatalogFilters from "./CatalogFilters";
+import { redirectStaffToDashboard } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
-// ORDER BY cannot be a query parameter, so the allowed sorts live in a
-// fixed whitelist. User input only picks a key, it is never put into SQL.
 const SORT_OPTIONS = {
   title: { label: "Judul (A-Z)", sql: "b.judul ASC" },
   year: { label: "Tahun terbit (terbaru)", sql: "b.tahun_terbit DESC, b.judul ASC" },
@@ -16,6 +16,8 @@ const SORT_OPTIONS = {
 };
 
 export default async function CatalogPage({ searchParams }) {
+  await redirectStaffToDashboard();
+
   const params = await searchParams;
 
   const keyword = params.q?.trim() || null;
@@ -26,7 +28,6 @@ export default async function CatalogPage({ searchParams }) {
     "SELECT id, nama FROM kategori ORDER BY nama ASC"
   );
 
-  // Search, filter and sort all happen in SQL.
   const bookResult = await pool.query(
     `SELECT b.id, b.judul, b.pengarang, b.tahun_terbit, b.jumlah_stok,
             b.link_sampul, k.nama AS kategori,
@@ -45,59 +46,46 @@ export default async function CatalogPage({ searchParams }) {
   );
   const books = bookResult.rows;
 
-  const inputClass = "rounded-lg bg-white px-3 py-2 text-black";
 
   return (
-    <main className="mx-auto max-w-5xl px-4 py-8 text-slate-100">
-      <h1 className="mb-6 text-2xl font-bold text-amber-400">Katalog Buku</h1>
-
-      <form method="GET" className="mb-6 grid gap-3 sm:grid-cols-4">
-        <input
-          name="q"
-          defaultValue={keyword ?? ""}
-          placeholder="Cari judul atau pengarang..."
-          className={`${inputClass} sm:col-span-2`}
+    <main className="mx-auto w-full min-w-0 max-w-6xl px-3 py-6 text-slate-100 sm:px-5 sm:py-8 lg:px-8">
+  
+      <h1 className="mb-6 text-2xl font-bold text-amber-400 sm:text-3xl">
+        Katalog Buku
+      </h1>
+  
+      <div className="mb-5 min-w-0">
+        <CatalogFilters
+          keyword={keyword}
+          categoryId={categoryId}
+          sortKey={sortKey}
+          hasSort={Object.hasOwn(SORT_OPTIONS, params.sort)}
+          categories={categoryResult.rows}
+          sorts={Object.entries(SORT_OPTIONS).map(([key, o]) => [
+            key,
+            o.label,
+          ])}
         />
-        <select
-          name="category"
-          defaultValue={categoryId ? String(categoryId) : ""}
-          className={inputClass}
-        >
-          <option value="">Semua kategori</option>
-          {categoryResult.rows.map((category) => (
-            <option key={category.id} value={category.id}>
-              {category.nama}
-            </option>
-          ))}
-        </select>
-        <select name="sort" defaultValue={sortKey} className={inputClass}>
-          {Object.entries(SORT_OPTIONS).map(([key, option]) => (
-            <option key={key} value={key}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-        <button
-          type="submit"
-          className="rounded-lg bg-amber-500 px-4 py-2 font-semibold text-slate-900 hover:bg-amber-400 sm:col-span-4"
-        >
-          Terapkan
-        </button>
-      </form>
-
-      <p className="mb-4 text-sm text-slate-400">{books.length} buku ditemukan</p>
-
+      </div>
+  
+      <p className="mb-4 text-sm text-slate-400">
+        {books.length} buku ditemukan
+      </p>
+  
       {books.length === 0 ? (
         <p className="py-10 text-center text-slate-400">
           Tidak ada buku yang cocok. Coba kata kunci atau kategori lain.
         </p>
       ) : (
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+        <div className="grid min-w-0 grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 lg:gap-5">
           {books.map((book) => (
-            <BookCard key={book.id} book={book} />
+            <div key={book.id} className="min-w-0">
+              <BookCard book={book} />
+            </div>
           ))}
         </div>
       )}
+  
     </main>
   );
 }

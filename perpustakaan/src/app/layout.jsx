@@ -1,8 +1,9 @@
+
 import "./globals.css";
 import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 import { getCurrentUser } from "@/lib/auth";
 import { Cormorant_Garamond } from "next/font/google";
+import AppFrame from "@/components/AppFrame";
 
 const display = Cormorant_Garamond({
   subsets: ["latin"],
@@ -12,25 +13,21 @@ const display = Cormorant_Garamond({
 
 export const metadata = {
   title: "Athenaria | Universe of Books",
-  description: "Perpustakaan digital: temukan buku, ajukan pinjam, pantau denda.",
+  description:
+    "Perpustakaan digital: temukan buku, ajukan pinjam, pantau denda.",
 };
 
 export default async function RootLayout({ children }) {
   const user = await getCurrentUser();
 
   return (
-    <html
-      lang="id"
-    >
-      <body className={`${display.variable} flex min-h-screen flex-col`}>
+    <html lang="id">
+      <body className={`${display.variable} flex min-h-screen w-full flex-col overflow-x-clip`}>
         <Navbar user={user} />
-        
-        <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-6 pt-16">
+
+        <AppFrame user={user}>
           {children}
-        </main>
-
-        <Footer />
-
+        </AppFrame>
       </body>
     </html>
   );

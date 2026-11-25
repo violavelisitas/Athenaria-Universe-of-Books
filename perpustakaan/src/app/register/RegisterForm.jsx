@@ -53,6 +53,9 @@ export default function RegisterForm() {
         type="password"
         error={errors.password}
       />
+      <p className="mt-1 text-xs text-slate-400">
+        Minimal 8 karakter, kombinasi huruf dan angka.
+      </p>
 
       <button
         type="submit"

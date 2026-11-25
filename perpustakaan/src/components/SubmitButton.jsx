@@ -2,7 +2,7 @@
 
 import { useFormStatus } from "react-dom";
 
-// Submit button that disables itself while its parent form is submitting.
+// Submit button that disables itself while its parent form is submitting
 export default function SubmitButton({
   children,
   pendingText = "Memproses...",

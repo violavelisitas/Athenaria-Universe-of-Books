@@ -72,7 +72,9 @@ export default async function StaffDashboard({ searchParams }) {
             u.nama AS borrower, u.nim, b.judul,
             GREATEST(CURRENT_DATE - t.tanggal_jatuh_tempo::date, 0) AS days_late,
             GREATEST(CURRENT_DATE - t.tanggal_jatuh_tempo::date, 0)
-              * b.tarif_denda_per_hari AS estimated_fine
+              * b.tarif_denda_per_hari AS estimated_fine,
+            GREATEST(CURRENT_DATE - t.tanggal_jatuh_tempo::date, 0) AS days_late,
+            (t.tanggal_jatuh_tempo::date - CURRENT_DATE) AS days_left
      FROM transaksi t
      JOIN users u ON u.id = t.peminjam_id
      JOIN buku b ON b.id = t.buku_id
@@ -101,8 +103,10 @@ export default async function StaffDashboard({ searchParams }) {
   const activeLoans = activeResult.rows.map((row) => ({
     ...row,
     days_late: Number(row.days_late),
+    days_left: Number(row.days_left),
     estimated_fine: Number(row.estimated_fine),
   }));
+
   const fines = fineResult.rows;
   const overdueCount = activeLoans.filter((loan) => loan.days_late > 0).length;
 
@@ -232,7 +236,7 @@ export default async function StaffDashboard({ searchParams }) {
                   <th className={th}>Peminjam</th>
                   <th className={th}>Buku</th>
                   <th className={th}>Jatuh tempo</th>
-                  <th className={th}>Estimasi denda</th>
+                  <th className={th}>Status</th>
                   <th className="py-2">Aksi</th>
                 </tr>
               </thead>
@@ -248,10 +252,14 @@ export default async function StaffDashboard({ searchParams }) {
                     <td className={td}>
                       {loan.days_late > 0 ? (
                         <span className="text-red-400">
-                          {loan.days_late} hari, {formatRupiah(loan.estimated_fine)}
+                          Terlambat {loan.days_late} hari, {formatRupiah(loan.estimated_fine)}
                         </span>
-                      ) : (
-                        <span className="text-slate-400">Tepat waktu</span>
+                        ) : loan.days_left === 0 ? (
+                        <span className="text-amber-400">Jatuh tempo hari ini</span>
+                        ) : loan.days_left <= 2 ? (
+                        <span className="text-amber-400">Sisa {loan.days_left} hari</span>
+                        ) : (
+                        <span className="text-slate-400">Sisa {loan.days_left} hari</span>
                       )}
                     </td>
                     <td className="py-2">

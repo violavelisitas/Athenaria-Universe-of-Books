@@ -6,7 +6,6 @@ import { ANNOUNCEMENT_CATEGORIES } from "@/lib/announcements";
 export const dynamic = "force-dynamic";
 
 export default async function AnnouncementListPage() {
-  // Public page: only 'Published' announcements are ever selected.
   const result = await pool.query(
     `SELECT id, judul, isi, kategori, tanggal_publikasi
      FROM pengumuman

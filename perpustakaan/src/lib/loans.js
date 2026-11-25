@@ -1,6 +1,6 @@
 import pool from "@/lib/db";
 
-// A student with any unpaid fine ('Tertunggak') cannot borrow again.
+// A student with any unpaid fine ('Tertunggak') cant borrow again
 export async function hasUnpaidFine(userId) {
   const result = await pool.query(
     `SELECT 1

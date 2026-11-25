@@ -12,7 +12,7 @@ export default async function AnnouncementDetailPage({ params }) {
   const announcementId = parseId(id);
   if (!announcementId) notFound();
 
-  // A draft returns no row, so visitors get a 404 instead of the content.
+  // A draft returns no row so visitors get a 404 
   const result = await pool.query(
     `SELECT judul, isi, kategori, tanggal_publikasi
      FROM pengumuman

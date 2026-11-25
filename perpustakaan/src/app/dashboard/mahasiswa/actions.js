@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { requireRole } from "@/lib/auth";
 import { parseId } from "@/lib/helpers";
 import { withTransaction } from "@/lib/transaction";
+import pool from "@/lib/db";
 
 const DASHBOARD_PATH = "/dashboard/mahasiswa";
 
@@ -18,7 +19,7 @@ export async function requestExtensionAction(id) {
 
   const outcome = await withTransaction(async (client) => {
     // Only the owner's loan is selected. FOR UPDATE locks the row so a
-    // double click cannot create two requests.
+    // double click cannot create two requests
     const loan = await client.query(
       `SELECT status, (tanggal_jatuh_tempo::date >= CURRENT_DATE) AS before_due
        FROM transaksi
@@ -50,4 +51,33 @@ export async function requestExtensionAction(id) {
   revalidatePath(DASHBOARD_PATH);
   revalidatePath("/dashboard/pegawai");
   redirect(`${DASHBOARD_PATH}?msg=${outcome}`);
+}
+
+export async function updateProfileAction(formData) {
+  const user = await requireRole("mahasiswa");
+  const nama = String(formData.get("nama") ?? "").trim();
+  const email = String(formData.get("email") ?? "").trim().toLowerCase();
+
+  if (nama.length < 2 || nama.length > 100) {
+    redirect("/dashboard/mahasiswa/profil?msg=profile-name-invalid");
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    redirect("/dashboard/mahasiswa/profil?msg=profile-email-invalid");
+  }
+
+  // Pastikan email belum dipakai pengguna lain
+  const dup = await pool.query(
+    "SELECT 1 FROM users WHERE email = $1 AND id <> $2",
+    [email, user.id]
+  );
+  if (dup.rowCount > 0) {
+    redirect("/dashboard/mahasiswa/profil?msg=profile-email-taken");
+  }
+
+  await pool.query(
+    "UPDATE users SET nama = $1, email = $2 WHERE id = $3",
+    [nama, email, user.id]
+  );
+
+  redirect("/dashboard/mahasiswa?msg=profile-updated");
 }

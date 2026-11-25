@@ -1,7 +1,5 @@
 import pool from "@/lib/db";
 
-// Runs several queries as ONE database transaction.
-// If the callback throws, everything is rolled back (nothing is saved).
 export async function withTransaction(callback) {
   const client = await pool.connect();
   try {

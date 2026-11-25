@@ -13,7 +13,6 @@ const LIST_PATH = "/admin/user";
 const ROLES = ["admin", "pegawai", "mahasiswa"];
 
 // isCreate: password is required on create, optional on edit
-// (leave it empty to keep the current password).
 function readUserForm(formData, isCreate) {
   const text = (field) => String(formData.get(field) ?? "").trim();
 
@@ -26,7 +25,7 @@ function readUserForm(formData, isCreate) {
   };
   const password = String(formData.get("password") ?? "");
 
-  // Every field is required (task: "semua data wajib diisi").
+  // Every field is required
   const errors = {};
   if (values.name.length < 3) errors.name = "Nama minimal 3 karakter.";
   if (!isValidEmail(values.email)) errors.email = "Format email tidak valid.";
@@ -99,7 +98,7 @@ export async function createUserAction(previousState, formData) {
   redirect(`${LIST_PATH}?msg=created`);
 }
 
-// Bound with .bind(null, userId) in the edit page.
+// Bound with .bind(null, userId) in the edit page
 export async function updateUserAction(id, previousState, formData) {
   const admin = await requireRole("admin");
 
@@ -109,7 +108,6 @@ export async function updateUserAction(id, previousState, formData) {
   const { values, errors, password } = readUserForm(formData, false);
 
   // An admin cannot change their own role or deactivate themselves
-  // (it could lock everyone out).
   if (userId === admin.id && values.role !== admin.role) {
     errors.role = "Kamu tidak dapat mengubah role akunmu sendiri.";
   }
@@ -159,7 +157,7 @@ export async function deleteUserAction(id) {
   // Rule 1: an admin cannot delete their own account.
   if (userId === admin.id) redirect(`${LIST_PATH}?msg=self`);
 
-  // Rule 2: a user with an active request or loan cannot be deleted.
+  // a user with an active request or loan cant be deleted
   const active = await pool.query(
     `SELECT 1 FROM transaksi
      WHERE peminjam_id = $1 AND status IN ('Menunggu Konfirmasi', 'Sedang Dipinjam')
@@ -168,8 +166,8 @@ export async function deleteUserAction(id) {
   );
   if (active.rows.length > 0) redirect(`${LIST_PATH}?msg=active`);
 
-  // Rule 3: history must stay intact. If other tables still reference this
-  // user, PostgreSQL raises a foreign key error (23503) and we show a message.
+  // history must stay intact. If other tables still reference this
+  // user, PostgreSQL raises a foreign key error (23503)
   let outcome = "deleted";
   try {
     await withTransaction(async (client) => {

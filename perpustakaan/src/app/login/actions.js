@@ -25,8 +25,6 @@ export async function loginAction(previousState, formData) {
     ? await bcrypt.compare(password, user.password)
     : false;
 
-  // Same message for unknown email and wrong password, so attackers
-  // cannot discover which emails are registered.
   if (!isMatch) {
     return {
       errors: { general: "Email atau password salah." },
@@ -34,7 +32,6 @@ export async function loginAction(previousState, formData) {
     };
   }
 
-  // Checked only after the password is correct.
   if (!user.aktif) {
     return {
       errors: { general: "Akunmu dinonaktifkan. Hubungi admin perpustakaan." },

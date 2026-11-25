@@ -8,6 +8,8 @@ import Notice from "@/components/Notice";
 import StatusBadge from "@/components/StatusBadge";
 import ConfirmActionButton from "@/components/ConfirmActionButton";
 import { deleteAnnouncementAction, togglePublishAction } from "./actions";
+import { redirectStaffToDashboard } from "@/lib/auth";
+
 
 export const dynamic = "force-dynamic";
 
@@ -19,6 +21,8 @@ const MESSAGES = {
 };
 
 export default async function ManageAnnouncementsPage({ searchParams }) {
+  await redirectStaffToDashboard();
+
   await requireRole("admin", "pegawai");
   const params = await searchParams;
   const flash = pickMessage(MESSAGES, params.msg);

@@ -6,7 +6,6 @@ import pool from "@/lib/db";
 import { requireRole } from "@/lib/auth";
 import { parseId } from "@/lib/helpers";
 
-// Bound with .bind(null, transactionId) in the page.
 export async function submitReviewAction(transactionId, previousState, formData) {
   const user = await requireRole("mahasiswa");
 
@@ -28,7 +27,6 @@ export async function submitReviewAction(transactionId, previousState, formData)
   }
   if (Object.keys(errors).length > 0) return { errors, values };
 
-  // The transaction must belong to this student AND be finished ('Selesai').
   const loan = await pool.query(
     "SELECT buku_id, status FROM transaksi WHERE id = $1 AND peminjam_id = $2",
     [loanId, user.id]
@@ -46,7 +44,7 @@ export async function submitReviewAction(transactionId, previousState, formData)
       [user.id, row.buku_id, rating, values.comment || null]
     );
   } catch (error) {
-    // 23505 = unique index: one review per user per book
+    // 23505 = unique violation
     if (error.code === "23505") duplicate = true;
     else throw error;
   }

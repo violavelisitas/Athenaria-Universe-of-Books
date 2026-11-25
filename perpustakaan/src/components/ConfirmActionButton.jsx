@@ -1,6 +1,6 @@
 "use client";
 
-// A form button that asks for confirmation before running a Server Action.
+// A form button that asks for confirmation before running a Server Action
 export default function ConfirmActionButton({
   action,
   message,

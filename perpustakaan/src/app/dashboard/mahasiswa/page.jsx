@@ -12,6 +12,7 @@ export const dynamic = "force-dynamic";
 
 const MESSAGES = {
   "ext-requested": ["success", "Pengajuan perpanjangan terkirim."],
+  "profile-updated": ["success", "Profil berhasil diperbarui."],
   "ext-already": ["error", "Perpanjangan untuk peminjaman ini sudah diajukan atau disetujui."],
   overdue: ["error", "Perpanjangan hanya bisa diajukan sebelum jatuh tempo."],
   "not-active": ["error", "Peminjaman ini tidak sedang aktif."],
@@ -58,8 +59,18 @@ export default async function StudentDashboard({ searchParams }) {
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-8 text-slate-100">
-      <h1 className="text-2xl font-bold text-amber-400">Dashboard Mahasiswa</h1>
-      <p className="mb-6 mt-1 text-slate-300">Halo, {user.name}.</p>
+      <div className="mb-6 flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <h1 className="text-2xl font-bold text-amber-400">Dashboard Mahasiswa</h1>
+          <p className="mt-1 text-slate-300">Halo, {user.name}.</p>
+        </div>
+        <Link
+          href="/dashboard/mahasiswa/profil"
+          className="rounded-lg border border-amber-500 px-3 py-1 text-sm text-amber-400 hover:bg-slate-800"
+        >
+          👤
+        </Link>
+      </div>
 
       {flash && <Notice tone={flash[0]}>{flash[1]}</Notice>}
 

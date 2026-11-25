@@ -18,9 +18,9 @@ export default async function ManageBooksPage({ searchParams }) {
   const error = params.error;
   const keyword = params.q?.trim() || null;
 
-  // jumlah_stok is the number of copies on the shelf (available).
+  // jumlah_stok is the number of copies on the shelf (available)
   // Copies currently on loan are counted from 'Sedang Dipinjam' transactions,
-  // so total stock = available + on loan.
+  // so total stock = available + on loan
   const result = await pool.query(
     `SELECT b.id, b.judul, b.pengarang, b.isbn, b.jumlah_stok,
             b.link_sampul, k.nama AS kategori,
@@ -34,9 +34,10 @@ export default async function ManageBooksPage({ searchParams }) {
      ORDER BY b.judul ASC`,
     [keyword]
   );
+
   const books = result.rows.map((row) => ({
     ...row,
-    on_loan: Number(row.on_loan), // COUNT returns text in pg
+    on_loan: Number(row.on_loan),
     total_stock: Number(row.jumlah_stok) + Number(row.on_loan),
   }));
 

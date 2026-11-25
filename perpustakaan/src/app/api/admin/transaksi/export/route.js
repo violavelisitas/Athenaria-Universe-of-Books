@@ -1,11 +1,11 @@
+
 import { NextResponse } from "next/server";
 import pool from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
-// Wraps a value for CSV. A leading = + - @ could be run as a formula when the
-// file is opened in Excel, so those values get a leading apostrophe.
+// Prevents CSV formula injection when values are opened in Excel
 function csvCell(value) {
   if (value === null || value === undefined) return "";
   const text = String(value);
@@ -13,15 +13,13 @@ function csvCell(value) {
   return `"${safe.replace(/"/g, '""')}"`;
 }
 
-// GET /api/admin/transaksi/export
-// Admin only: downloads every loan transaction as a CSV file (opens in Excel).
 export async function GET() {
-  // Authentication and authorization are checked inside the handler,
-  // because route handlers are plain HTTP endpoints anyone can call.
   const user = await getCurrentUser();
+
   if (!user) {
     return NextResponse.json({ error: "Belum login." }, { status: 401 });
   }
+
   if (user.role !== "admin") {
     return NextResponse.json({ error: "Akses ditolak." }, { status: 403 });
   }
@@ -46,6 +44,7 @@ export async function GET() {
       "Tanggal Pinjam", "Jatuh Tempo", "Tanggal Kembali",
       "Hari Terlambat", "Total Denda", "Status Denda",
     ];
+
     const lines = result.rows.map((row) =>
       [
         row.peminjam, row.nim, row.judul, row.status, row.diajukan,
@@ -56,7 +55,7 @@ export async function GET() {
         .join(",")
     );
 
-    // The BOM at the start makes Excel read the file as UTF-8.
+    // Ensures Excel recognizes the CSV content as UTF-8.
     const csv = "\uFEFF" + [header.map(csvCell).join(","), ...lines].join("\r\n");
 
     return new NextResponse(csv, {

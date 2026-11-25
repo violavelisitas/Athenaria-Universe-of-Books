@@ -11,7 +11,7 @@ export function formatRupiah(amount) {
   return `Rp ${Number(amount ?? 0).toLocaleString("id-ID")}`;
 }
 
-// Formats a date as YYYY-MM-DD (local time) for <input type="date">.
+// Format:YYYY-MM-DD
 export function toDateInputValue(value) {
   const date = value ? new Date(value) : new Date();
   const pad = (number) => String(number).padStart(2, "0");

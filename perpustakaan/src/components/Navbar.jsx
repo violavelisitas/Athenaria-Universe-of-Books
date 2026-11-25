@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -6,7 +7,6 @@ import { usePathname } from "next/navigation";
 import { logoutAction } from "@/app/login/actions";
 
 const publicMenu = [
-  // { label: "Beranda", path: "/" },
   { label: "Katalog", path: "/katalog" },
   { label: "Pengumuman", path: "/pengumuman" },
 ];
@@ -15,7 +15,11 @@ export default function Navbar({ user }) {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
 
-  const menu = user
+  const isStaff = user && user.role !== "mahasiswa";
+
+  const menu = isStaff
+    ? [{ label: "Dashboard", path: "/dashboard" }]
+    : user
     ? [...publicMenu, { label: "Dashboard", path: "/dashboard" }]
     : publicMenu;
 
@@ -28,41 +32,60 @@ export default function Navbar({ user }) {
       : "text-slate-300 hover:text-white";
 
   const searchInput =
-    "rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-sm text-white outline-none placeholder:text-slate-300 focus:border-amber-500";
+    "w-full min-w-0 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm text-white outline-none placeholder:text-slate-300 focus:border-amber-500";
+
+  const closeMenu = () => setIsOpen(false);
 
   return (
-    <nav className="fixed top-0 z-50 w-full bg-black/30 text-slate-200 backdrop-blur-md">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8 py-3">
-        <Link href="/" className="leading-tight" onClick={() => setIsOpen(false)}>
+    <nav className="fixed inset-x-0 top-0 z-50 w-full bg-black/30 text-slate-200 backdrop-blur-md">
+
+      <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:px-8">
+
+        {/* LOGO */}
+        <Link
+          href={isStaff ? "/dashboard" : "/"}
+          className="min-w-0 shrink-0 leading-tight"
+          onClick={closeMenu}
+        >
           <span
-            className="block text-2xl tracking-wide text-amber-200"
-            style={{ fontFamily: "var(--font-display, Georgia), serif" }}
+            className="block text-xl tracking-wide text-amber-200 sm:text-2xl"
+            style={{
+              fontFamily: "var(--font-display, Georgia), serif",
+            }}
           >
             ATHENARIA
           </span>
-          <span className="block text-[10px] tracking-[0.3em] text-amber-100">
+
+          <span className="block text-[9px] tracking-[0.25em] text-amber-100 sm:text-[10px] sm:tracking-[0.3em]">
             UNIVERSE OF BOOKS
           </span>
         </Link>
 
-        <form
-          action="/katalog"
-          method="GET"
-          className="hidden sm:block flex-1 max-w-xs mx-4"
-        >
-          <input
-            name="q"
-            placeholder="Cari buku..."
-            className={`w-full ${searchInput}`}
-          />
-        </form>
+        {/* DESKTOP SEARCH */}
+        {!isStaff && (
+          <form
+            action="/katalog"
+            method="GET"
+            className="mx-2 hidden min-w-0 max-w-xs flex-1 sm:block lg:mx-4"
+          >
+            <input
+              name="q"
+              placeholder="Cari buku..."
+              className={searchInput}
+            />
+          </form>
+        )}
 
-        {/* Desktop and tablet */}
-        <div className="hidden items-center gap-5 md:flex">
+        {/* DESKTOP MENU */}
+        <div className="hidden shrink-0 items-center gap-5 md:flex">
+
           <ul className="flex items-center gap-5">
             {menu.map((item) => (
               <li key={item.path}>
-                <Link href={item.path} className={linkClass(item.path)}>
+                <Link
+                  href={item.path}
+                  className={linkClass(item.path)}
+                >
                   {item.label}
                 </Link>
               </li>
@@ -71,13 +94,14 @@ export default function Navbar({ user }) {
 
           {user ? (
             <div className="flex items-center gap-3">
-              <span className="hidden text-sm text-slate-400 lg:inline">
+              <span className="hidden max-w-40 truncate text-sm text-slate-400 lg:inline">
                 {user.name} ({user.role})
               </span>
+
               <form action={logoutAction}>
                 <button
                   type="submit"
-                  className="rounded-lg border border-white/20 px-3 py-1 text-sm hover:bg-white/10"
+                  className="whitespace-nowrap rounded-lg border border-white/20 px-3 py-2 text-sm hover:bg-white/10"
                 >
                   Keluar
                 </button>
@@ -85,12 +109,16 @@ export default function Navbar({ user }) {
             </div>
           ) : (
             <div className="flex items-center gap-3">
-              <Link href="/login" className="text-slate-300 hover:text-white">
+              <Link
+                href="/login"
+                className="whitespace-nowrap text-slate-300 hover:text-white"
+              >
                 Masuk
               </Link>
+
               <Link
                 href="/register"
-                className="rounded-lg bg-amber-500 px-3 py-1 text-sm font-semibold text-slate-900 hover:bg-amber-400"
+                className="whitespace-nowrap rounded-lg bg-amber-500 px-3 py-2 text-sm font-semibold text-slate-900 hover:bg-amber-400"
               >
                 Daftar
               </Link>
@@ -98,15 +126,25 @@ export default function Navbar({ user }) {
           )}
         </div>
 
-        {/* Hamburger button */}
+        {/* MOBILE MENU BUTTON */}
         <button
           type="button"
           aria-label={isOpen ? "Tutup menu" : "Buka menu"}
           aria-expanded={isOpen}
+          aria-controls="mobile-navigation"
           onClick={() => setIsOpen((open) => !open)}
-          className="rounded-lg border border-white/20 p-2 md:hidden"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-white/20 hover:bg-white/10 md:hidden"
         >
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+          <svg
+            width="22"
+            height="22"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            aria-hidden="true"
+          >
             {isOpen ? (
               <path d="M6 6l12 12M18 6L6 18" />
             ) : (
@@ -114,23 +152,40 @@ export default function Navbar({ user }) {
             )}
           </svg>
         </button>
+
       </div>
 
-      {/* Phone menu panel */}
+      {/* MOBILE NAVIGATION */}
       {isOpen && (
-        <div className="border-t border-white/10 bg-[#0d0b1a]/95 px-4 pb-4 md:hidden">
-          <form action="/katalog" method="GET" className="mt-3">
-            <input name="q" placeholder="Cari judul atau pengarang..." className={`w-full ${searchInput}`} />
-          </form>
+        <div
+          id="mobile-navigation"
+          className="max-h-[calc(100dvh-65px)] overflow-y-auto border-t border-white/10 bg-[#0d0b1a]/95 px-4 pb-5 md:hidden"
+        >
+
+          {!isStaff && (
+            <form
+              action="/katalog"
+              method="GET"
+              className="mt-4"
+            >
+              <input
+                name="q"
+                placeholder="Cari judul atau pengarang..."
+                className={searchInput}
+              />
+            </form>
+          )}
 
           <ul className="mt-3 space-y-1">
             {menu.map((item) => (
               <li key={item.path}>
                 <Link
                   href={item.path}
-                  onClick={() => setIsOpen(false)}
-                  className={`block rounded-lg px-3 py-2 ${
-                    isActive(item.path) ? "bg-white/10 font-semibold text-white" : "text-slate-300"
+                  onClick={closeMenu}
+                  className={`block rounded-lg px-3 py-3 transition ${
+                    isActive(item.path)
+                      ? "bg-white/10 font-semibold text-white"
+                      : "text-slate-300 hover:bg-white/5"
                   }`}
                 >
                   {item.label}
@@ -140,15 +195,17 @@ export default function Navbar({ user }) {
           </ul>
 
           <div className="mt-3 border-t border-white/10 pt-3">
+
             {user ? (
               <>
-                <p className="mb-2 px-3 text-sm text-slate-400">
+                <p className="mb-3 break-words px-3 text-sm text-slate-400">
                   {user.name} ({user.role})
                 </p>
+
                 <form action={logoutAction}>
                   <button
                     type="submit"
-                    className="w-full rounded-lg border border-white/20 px-3 py-2 text-left hover:bg-white/10"
+                    className="w-full rounded-lg border border-white/20 px-3 py-3 text-left hover:bg-white/10"
                   >
                     Keluar
                   </button>
@@ -158,23 +215,26 @@ export default function Navbar({ user }) {
               <div className="flex gap-2">
                 <Link
                   href="/login"
-                  onClick={() => setIsOpen(false)}
-                  className="flex-1 rounded-lg border border-white/20 px-3 py-2 text-center"
+                  onClick={closeMenu}
+                  className="flex-1 rounded-lg border border-white/20 px-3 py-3 text-center"
                 >
                   Masuk
                 </Link>
+
                 <Link
                   href="/register"
-                  onClick={() => setIsOpen(false)}
-                  className="flex-1 rounded-lg bg-amber-500 px-3 py-2 text-center font-semibold text-slate-900"
+                  onClick={closeMenu}
+                  className="flex-1 rounded-lg bg-amber-500 px-3 py-3 text-center font-semibold text-slate-900"
                 >
                   Daftar
                 </Link>
               </div>
             )}
+
           </div>
         </div>
       )}
+
     </nav>
   );
 }

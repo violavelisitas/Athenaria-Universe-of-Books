@@ -1,19 +1,16 @@
+
 import { NextResponse } from "next/server";
 import pool from "@/lib/db";
 import { parseId } from "@/lib/helpers";
 
 export const dynamic = "force-dynamic";
 
-// Same whitelist idea as the catalog page: the query string only picks a key,
-// it is never placed into the SQL text.
 const SORTS = {
   title: "b.judul ASC",
   year: "b.tahun_terbit DESC, b.judul ASC",
   rating: "avg_rating DESC, review_count DESC, b.judul ASC",
 };
 
-// GET /api/buku?q=habit&category=2&sort=rating&limit=10
-// Public JSON endpoint (the catalog is public, so no login is needed).
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
 

@@ -34,7 +34,7 @@ function readAnnouncementForm(formData) {
   if (!Object.hasOwn(ANNOUNCEMENT_CATEGORIES, values.category)) {
     errors.category = "Pilih kategori.";
   }
-  // The date must look like YYYY-MM-DD and be a real calendar date.
+  // Real calendar date with format: YYYY-MM-DD
   if (
     !/^\d{4}-\d{2}-\d{2}$/.test(values.publishDate) ||
     Number.isNaN(new Date(values.publishDate).getTime())
@@ -67,7 +67,6 @@ export async function createAnnouncementAction(previousState, formData) {
   redirect(`${LIST_PATH}?msg=created`);
 }
 
-// Bound with .bind(null, announcementId) in the edit page.
 export async function updateAnnouncementAction(id, previousState, formData) {
   await requireRole(...ALLOWED_ROLES);
 
@@ -105,7 +104,6 @@ export async function deleteAnnouncementAction(id) {
   redirect(`${LIST_PATH}?msg=deleted`);
 }
 
-// Switches between Draft and Published. Drafts are never shown publicly.
 export async function togglePublishAction(id) {
   await requireRole(...ALLOWED_ROLES);
 
